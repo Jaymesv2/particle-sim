@@ -1,0 +1,45 @@
+[package]
+authors = ["Trent Turner <ghastfilms613@gmail.com>"]
+edition = "2021"
+# If you change the name here, you must also do it in flake.nix (and run `cargo generate-lockfile` afterwards)
+name = "particles"
+description = "particles"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+eframe = { version = "0.28" }
+epaint = { version = "0.28" }
+egui = { version = "0.28" }
+egui-wgpu = { version = "0.28" }
+
+wgpu = { version = "22.1.0" }
+
+tracing = { version = "0.1.40" }
+
+
+rand = "0.8"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.2", features = ["js"] }
+wasm-bindgen-futures = "0.4"
+wasm-timer = "0.2.5"
+# native:
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tracing-subscriber = { version = "0.3" }
+
+
+# to access the DOM (to hide the loading text)
+[target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
+# HACK: pin web-sys to <0.3.70 until a new `eframe` is released containing
+# the following PR: https://github.com/emilk/egui/pull/4980
+version = ">= 0.3.4, < 0.3.70"
+
+[profile.release]
+opt-level = 2 # fast and small wasm
+
+# Optimize all dependencies even in debug builds:
+[profile.dev.package."*"]
+opt-level = 2
+
